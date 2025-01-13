@@ -1,16 +1,216 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { contentfulClient } from '../lib/contentful';
 
+// Fetch data
+const eventRes = await contentfulClient.getEntries({
+  content_type: 'event',
+  limit: 3,
+  order: '-sys.createdAt'
+});
+
+const articleRes = await contentfulClient.getEntries({
+  content_type: 'article',
+  limit: 2,
+  order: '-sys.createdAt'
+});
+
+const galleryRes = await contentfulClient.getEntries({
+  content_type: 'gallery',
+  limit: 1,
+  order: 'sys.createdAt'
+});
+
+const events = eventRes.items;
+const articles = articleRes.items;
+const gallery = galleryRes.items[0];
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('sr-latn', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+function getRandomVideo() {
+  const videos = ['/MAC.mp4', '/Agri-food_SAFE.mp4'];
+  const randomIndex = Math.floor(Math.random() * videos.length);
+  return videos[randomIndex];
+}
+
+function isEventPast(eventTime) {
+  const now = new Date();
+  const eventDate = new Date(eventTime);
+  return eventDate < now;
+}
+
+const eventTitle = events[0] ? (
+  isEventPast(events[0].fields.eventTime) ? 
+    "Poslednji događaj" : 
+    "Najava događaja"
+) : "Događaji";
+
+const randomVideo = getRandomVideo();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="ITA Belgrade">
+  <div class="container max-w-5xl md:mx-auto px-4">
+    <!-- Video Section -->
+    <div class="aspect-video w-full mb-8 bg-gray-100">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        class="w-full h-full object-cover"
+        src={randomVideo}
+      >
+      </video>
+    </div>
+
+    <!-- Main Grid Section -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <!-- Events Column -->
+      <div class="md:col-span-2">
+        <h2 class="font-archivo text-itaGreen font-bold text-xl border-itaGreen my-2 border-b-2">
+          {eventTitle}
+        </h2>
+        {events[0] && (
+          <div class="bg-white shadow-lg rounded-lg overflow-hidden h-[500px]">
+            <a href={`/events/${events[0].fields.slug}`} class="flex flex-col h-full">
+              <div class="h-[300px] overflow-hidden">
+                <img 
+                  src={`https:${events[0].fields.cover.fields.file.url}`}
+                  alt={events[0].fields.title}
+                  width={800}
+                  height={400}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div class="p-6 flex-1 flex flex-col">
+                <h3 class="font-archivo text-xl text-itaGreen mb-2 line-clamp-2">
+                  {events[0].fields.title}
+                </h3>
+                <p class="text-itaGray mb-4 line-clamp-3 flex-1">
+                  {events[0].fields.short}
+                </p>
+                <time class="text-sm text-itaGray mt-auto">
+                  {formatDate(events[0].fields.eventTime)}
+                </time>
+              </div>
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- News Column -->
+      <div>
+        <h2 class="font-archivo text-itaRed font-bold text-xl border-itaRed my-2 border-b-2">
+          Novosti
+        </h2>
+        <div class="space-y-4">
+          {articles.map(article => (
+            <a 
+              href={`/articles/${article.fields.slug}`}
+              class="block bg-white shadow hover:shadow-md transition-shadow duration-300 rounded-lg overflow-hidden h-[240px]"
+            >
+              <div class="h-[140px] overflow-hidden">
+                <img 
+                  src={`https:${article.fields.cover.fields.file.url}`}
+                  alt={article.fields.title}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div class="p-4 h-[100px] flex flex-col">
+                <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
+                  {article.fields.title}
+                </h3>
+                <time class="text-sm text-itaGray mt-auto">
+                  {formatDate(article.fields.date)}
+                </time>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Latest Events and Articles Grid -->
+    <div class="grid md:grid-cols-2 gap-8 my-12">
+      <!-- Latest Events -->
+      <div>
+        <h2 class="font-archivo text-itaGreen font-bold text-xl border-itaGreen mb-6 border-b-2">
+          Najnoviji događaji
+        </h2>
+        <div class="space-y-6">
+          {events.slice(1,3).map(event => (
+            <a 
+              href={`/events/${event.fields.slug}`}
+              class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
+            >
+              <div class="flex h-full">
+                <div class="w-1/3 overflow-hidden">
+                  <img 
+                    src={`https:${event.fields.cover.fields.file.url}`}
+                    alt={event.fields.title}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div class="w-2/3 p-4 flex flex-col">
+                  <h3 class="font-archivo text-itaGreen font-medium mb-2 line-clamp-2">
+                    {event.fields.title}
+                  </h3>
+                  <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
+                    {event.fields.short}
+                  </p>
+                  <time class="text-sm text-itaGray mt-auto">
+                    {formatDate(event.fields.eventTime)}
+                  </time>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Latest Articles -->
+      <div>
+        <h2 class="font-archivo text-itaRed font-bold text-xl border-itaRed mb-6 border-b-2">
+          Najnoviji članci
+        </h2>
+        <div class="space-y-6">
+          {articles.slice(0, 2).map(article => (
+            <a 
+              href={`/articles/${article.fields.slug}`}
+              class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
+            >
+              <div class="flex h-full">
+                <div class="w-1/3 overflow-hidden">
+                  <img 
+                    src={`https:${article.fields.cover.fields.file.url}`}
+                    alt={article.fields.title}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div class="w-2/3 p-4 flex flex-col">
+                  <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
+                    {article.fields.title}
+                  </h3>
+                  <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
+                    {article.fields.short}
+                  </p>
+                  <time class="text-sm text-itaGray mt-auto">
+                    {formatDate(article.fields.date)}
+                  </time>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

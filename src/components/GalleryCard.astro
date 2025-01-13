@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+
+const { title, address, url, width, height, dateTime, slug } = Astro.props;
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('sr-latn', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// Create a proper URL object for the image
+const imageUrl = `https:${url}`;
+---
+
+<a href={`/galleries/${slug}`} class="block group">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+    <div class="aspect-video overflow-hidden bg-gray-100">
+      <Image 
+        src={imageUrl}
+        alt={title}
+        width={800}
+        height={450}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+    </div>
+    
+    <div class="p-4">
+      <h3 class="font-archivo text-itaGreen font-semibold text-lg mb-2 group-hover:text-itaRed transition-colors duration-300">
+        {title}
+      </h3>
+      
+      {address && (
+        <p class="text-itaGray text-sm mb-2">
+          <span class="font-medium">Lokacija:</span> {address}
+        </p>
+      )}
+      
+      <time class="text-sm text-itaGray block">
+        {formatDate(dateTime)}
+      </time>
+    </div>
+  </div>
+</a>

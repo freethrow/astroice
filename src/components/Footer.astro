@@ -1,0 +1,67 @@
+---
+import { ImLinkedin, ImYoutube, ImInstagram, ImTwitter } from 'react-icons/im';
+---
+
+<footer>
+  <div class="bg-[#f4f4f5] mt-5">
+    <div class="flex flex-col justify-between container max-w-5xl mx-auto min-h-[200px] text-sm md:px-0 px-2">
+      <div class="py-5">
+        <div>
+          <p class="font-bold text-lg text-darkGray">Kancelarija Agencije ITA u Beogradu</p>
+          <a href="mailto:belgrado@ice.it" class="text-[#4968b0] my-2 inline-block">belgrado@ice.it</a>
+          
+          <!-- Decorative line with dots -->
+          <div class="flex flex-row items-center py-3 w-full">
+            <div class="bg-[#CD1719] h-2 w-2 rounded-full shrink-0"></div>
+            <div class="bg-[#E6E6E6] h-[1px] flex-grow mx-2"></div>
+            <div class="bg-[#006341] h-2 w-2 rounded-full shrink-0"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-center md:justify-between">
+          <div class="text-[#4968b0]">
+            <a 
+              href="http://www.ice.it" 
+              class="hover:text-itaGray transition-colors duration-500"
+            >
+              www.ice.it
+            </a>
+          </div>
+          <div class="flex flex-col justify-between items-end">
+            <p class="my-3">Pratite nas:</p>
+            <div class="flex flex-row justify-evenly space-x-3 cursor-pointer social">
+              <a href="https://www.youtube.com/channel/UCDcxMr1QfesFd-G1cShfPiw" class="text-gray-600 hover:text-gray-800">
+                <ImYoutube size={25} />
+              </a>
+              <a href="https://twitter.com/itabelgrade" class="text-gray-600 hover:text-gray-800">
+                <ImTwitter size={25} />
+              </a>
+              <a href="https://www.linkedin.com/company/ita-italian-trade-agency-serbia-and-montenegro/?viewAsMember=true" class="text-gray-600 hover:text-gray-800">
+                <ImLinkedin size={25} />
+              </a>
+              <a href="https://www.instagram.com/itatradeagency/" class="text-gray-600 hover:text-gray-800">
+                <ImInstagram size={25} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-itaWhite flex flex-col justify-between container max-w-5xl md:mx-auto text-xs px-2 md:px-0 py-5">
+    <p class="m-1">Copyright © ICE - Agenzia per la promozione all'estero e l'internazionalizzazione delle imprese italiane, All rights reserved.</p>
+    <p class="m-1">
+      Ricevi questa e-mail poiché ti sei iscritto personalmente, o per conto della tua azienda/organizzazione, nella mailing list 
+      della Newsletter dell'ICE Agenzia. I dati vengono forniti ad una società terza, incaricata del trattamento dei dati personali
+      ad uso tecnico.
+    </p>
+    <p class="m-1">Per cancellarsi dalla Newsletter, cliccare su: Cancellami</p>
+  </div>
+</footer>
+
+<style>
+  .social a {
+    @apply transition-colors duration-300;
+  }
+</style>

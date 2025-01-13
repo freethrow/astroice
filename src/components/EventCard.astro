@@ -1,0 +1,39 @@
+---
+// Props interface
+const { title, description, eventTime, imageUrl, width, height, slug } = Astro.props;
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('sr-latn', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+---
+
+<div class="p-4 bg-white shadow-lg rounded">
+  <a href={`/events/${slug}`} class="block">
+    <div class="aspect-video overflow-hidden">
+      <img 
+      transition:name={`image-${slug}`}
+        src={imageUrl}
+        width={width}
+        height={height}
+        alt={title}
+        class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+        loading="lazy"
+      />
+    </div>
+    <h3 class="font-archivo text-itaGreen mt-4 hover:text-itaDarkGreen transition-colors duration-300">
+      {title}
+    </h3>
+    <p class="text-itaGray mt-2 line-clamp-3">
+      {description}
+    </p>
+    <time class="text-sm text-itaGray block mt-2">
+      {formatDate(eventTime)}
+    </time>
+  </a>
+</div>

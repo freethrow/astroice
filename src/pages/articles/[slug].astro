@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllArticles } from '../../lib/contentful';
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import { GrDocumentVerified } from 'react-icons/gr';
+
+export async function getStaticPaths() {
+  const articles = await getAllArticles();
+  return articles.map(article => ({
+    params: { slug: article.fields.slug },
+    props: { article }
+  }));
+}
+
+const { article } = Astro.props;
+const contentHtml = documentToHtmlString(article.fields.content);
+---
+
+<Layout title={article.fields.title}>
+  <article class="container max-w-4xl mx-auto px-4 py-8">
+    <!-- Title -->
+    <h1 class="text-3xl md:text-4xl font-archivo text-itaGreen font-semibold text-center mb-8">
+      {article.fields.title}
+    </h1>
+
+    <!-- Featured Image -->
+<div class="mb-8 h-[200px] md:h-[400px] overflow-hidden rounded-lg shadow-md">
+  <img 
+    src={`https:${article.fields.cover.fields.file.url}`}
+    width={article.fields.cover.fields.file.details.image.width}
+    height={article.fields.cover.fields.file.details.image.height}
+    alt={article.fields.title}
+    class="w-full h-full object-cover"
+  />
+</div>
+
+    <!-- Article Content -->
+    <div class="prose prose-lg max-w-none mb-12">
+      <div set:html={contentHtml} />
+    </div>
+
+    <!-- Documents Section -->
+    {article.fields.documents && (
+      <div class="bg-gray-50 rounded-lg p-6 mt-8">
+        <h2 class="font-archivo text-itaGreen text-xl font-semibold mb-4 pb-2 border-b border-itaGreen">
+          Download
+        </h2>
+        <div class="space-y-3">
+          {article.fields.documents.map(document => (
+            <a 
+              href={`https:${document.fields.document[0].fields.file.url}`}
+              class="flex items-center gap-3 p-3 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow duration-300 text-itaGray hover:text-itaRed group"
+              download
+            >
+              <GrDocumentVerified size={20} />
+              <span class="font-medium">{document.fields.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</Layout>
+
+<style is:global>
+  .prose {
+    @apply text-itaGray;
+  }
+  .prose p {
+    @apply mb-6 leading-relaxed;
+  }
+  .prose a {
+    @apply text-itaGreen hover:text-itaRed transition-colors duration-300;
+  }
+  .prose h2 {
+    @apply text-2xl font-archivo text-itaGreen font-semibold mt-8 mb-4;
+  }
+  .prose h3 {
+    @apply text-xl font-archivo text-itaGreen font-medium mt-6 mb-3;
+  }
+  .prose ul {
+    @apply my-6 list-disc pl-6;
+  }
+  .prose ol {
+    @apply my-6 list-decimal pl-6;
+  }
+  .prose img {
+    @apply rounded-lg shadow-md my-8 mx-auto;
+  }
+  .prose iframe {
+    @apply w-full aspect-video rounded-lg shadow-md my-8 mx-auto;
+  }
+  .prose blockquote {
+    @apply border-l-4 border-itaGreen pl-4 italic my-6;
+  }
+  .prose strong {
+    @apply font-semibold text-itaGray;
+  }
+  .prose table {
+    @apply w-full my-6 border-collapse;
+  }
+  .prose table td,
+  .prose table th {
+    @apply border border-gray-200 p-2;
+  }
+  .prose table th {
+    @apply bg-gray-50;
+  }
+</style>

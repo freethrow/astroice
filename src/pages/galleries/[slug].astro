@@ -1,0 +1,199 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { getAllGalleries } from '../../lib/contentful';
+
+export async function getStaticPaths() {
+  const galleries = await getAllGalleries();
+  return galleries.map(gallery => ({
+    params: { slug: gallery.fields.slug },
+    props: { gallery }
+  }));
+}
+
+const { gallery } = Astro.props;
+
+// Prepare optimized photos array with different sizes
+const photos = gallery.fields.media.map(picture => ({
+  src: `https:${picture.fields.file.url}`,
+  width: picture.fields.file.details.image.width,
+  height: picture.fields.file.details.image.height,
+  alt: gallery.fields.title,
+  // Add optimized URLs for different sizes
+  sizes: {
+    thumbnail: `https:${picture.fields.file.url}?w=300&h=300&fit=fill&fm=webp`,
+    full: `https:${picture.fields.file.url}?w=1200&fm=webp`,
+  }
+}));
+---
+
+<Layout title={gallery.fields.title}>
+  <div class="container mx-auto px-4 py-8 max-w-[1600px]">
+    <h2 class="font-archivo text-itaGreen font-semibold border-b-itaGreen border-b mb-8 text-2xl text-center">
+      {gallery.fields.title}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 auto-rows-fr">
+      {photos.map((photo, index) => (
+        <div 
+          class="gallery-item aspect-square cursor-pointer bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          data-index={index}
+        >
+          <img
+            src={photo.sizes.thumbnail}
+            alt={photo.alt}
+            loading="lazy"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            data-full={photo.sizes.full}
+          />
+        </div>
+      ))}
+    </div>
+
+    {gallery.fields.author && (
+      <div class="text-center text-sm mt-8">
+        Fotografije: <span class="font-medium">{gallery.fields.author}</span>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<dialog id="lightbox" class="fixed inset-0 w-full h-full bg-black/90 z-50">
+    <button 
+      id="close-lightbox" 
+      class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors duration-300 w-8 h-8 flex items-center justify-center rounded-full text-2xl"
+      aria-label="Close gallery"
+    >
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width="24" 
+        height="24" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <button id="prev" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-4">
+      ‹
+    </button>
+    <button id="next" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-4">
+      ›
+    </button>
+    <div class="flex items-center justify-center h-full">
+      <img src="" alt="" class="max-h-[90vh] max-w-[90vw] object-contain" id="lightbox-img" />
+    </div>
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+      <span id="current-index"></span> / {photos.length}
+    </div>
+  </dialog>
+
+  <script define:vars={{ photos }}>
+    const gallery = document.querySelector('.grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('close-lightbox');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const currentIndexDisplay = document.getElementById('current-index');
+    let currentIndex = 0;
+    
+    function showImage(index) {
+      currentIndex = index;
+      const fullSizeUrl = photos[index].sizes.full;
+      lightboxImg.src = fullSizeUrl;
+      lightboxImg.alt = photos[index].alt;
+      currentIndexDisplay.textContent = index + 1;
+      
+      // Preload adjacent images
+      if (index < photos.length - 1) {
+        const nextImg = new Image();
+        nextImg.src = photos[index + 1].sizes.full;
+      }
+      if (index > 0) {
+        const prevImg = new Image();
+        prevImg.src = photos[index - 1].sizes.full;
+      }
+    }
+    
+    gallery.addEventListener('click', (e) => {
+      const item = e.target.closest('.gallery-item');
+      if (!item) return;
+      
+      const index = parseInt(item.dataset.index);
+      showImage(index);
+      lightbox.showModal();
+    });
+    
+    // Updated close button handler
+    closeBtn.addEventListener('click', () => {
+      lightbox.close();
+    });
+    
+    // Close on backdrop click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.close();
+      }
+    });
+    
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+      showImage(currentIndex);
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % photos.length;
+      showImage(currentIndex);
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.open) return;
+      
+      switch(e.key) {
+        case 'Escape': lightbox.close(); break;
+        case 'ArrowLeft': prevBtn.click(); break;
+        case 'ArrowRight': nextBtn.click(); break;
+      }
+    });
+    </script>
+
+<style>
+  dialog {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  dialog[open] {
+    animation: fade-in 0.3s ease-out;
+  }
+  
+  #lightbox-img {
+    animation: scale-in 0.3s ease-out;
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes scale-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>

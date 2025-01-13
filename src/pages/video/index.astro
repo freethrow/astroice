@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllVideos } from '../../lib/contentful';
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+
+// Fetch videos using helper function
+const videos = await getAllVideos();
+---
+
+<Layout title="Video">
+  <div class="container max-w-5xl mx-auto my-5 px-4">
+    <h2 class="font-archivo text-itaGreen font-bold text-xl my-2 text-center border-b-itaGreen border-b">
+      Video
+    </h2>
+    
+    <div class="grid md:grid-cols-3 gap-8 my-8">
+      {videos.map((video) => (
+        <div class="bg-white p-4 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300" key={video.fields.id}>
+          <h3 class="font-archivo text-itaGreen font-bold text-md mb-4 text-center h-[48px] flex items-center justify-center">
+            {video.fields.title}
+          </h3>
+          <div class="aspect-video">
+            <LiteYouTubeEmbed
+              id={video.fields.id}
+              title={video.fields.title}
+              aspectHeight={9}
+              aspectWidth={16}
+              client:load
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Ensure consistent card heights */
+  .grid > div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Style the YouTube embed container */
+  :global(.yte-lite) {
+    background-color: #000;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  /* Optional: Add hover effect for thumbnails */
+  :global(.yte-lite:hover) {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+  }
+</style>

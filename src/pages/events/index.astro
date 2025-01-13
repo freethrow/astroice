@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import EventCard from '../../components/EventCard.astro';
+import { getAllEvents } from '../../lib/contentful';
+
+const events = await getAllEvents();
+---
+
+<Layout title="Događaji">
+  <div class="flex-1 max-w-5xl mx-auto my-5 container px-2 md:px-0">
+    <h2 class="font-archivo text-itaGreen font-bold text-xl my-2 text-center border-itaGreen border-b">
+      Događaji
+    </h2>
+
+    <div class={events.length > 1 ? "grid md:grid-cols-3 gap-5 my-8" : "my-8"}>
+      {events.map(event => (
+        <EventCard
+          title={event.fields.title}
+          description={event.fields.short}
+          eventTime={event.fields.eventTime}
+          imageUrl={`https:${event.fields.cover.fields.file.url}`}
+          width={event.fields.cover.fields.file.details.image.width}
+          height={event.fields.cover.fields.file.details.image.height}
+          slug={event.fields.slug}
+        />
+      ))}
+    </div>
+  </div>
+</Layout>

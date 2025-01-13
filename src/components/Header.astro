@@ -1,0 +1,157 @@
+---
+// Define navigation items array with simpler structure
+const navItems = [
+  { label: 'Događaji', url: '/events' },
+  { label: 'Novosti', url: '/articles' },
+  { label: 'Galerije', url: '/galleries' },
+  { label: 'Video', url: '/video' },
+  { label: 'Mediji', url: '/clipping' },
+  { label: 'Dokumenti', url: '/documents' },
+  { label: 'Italiano', url: '/italiano', isSpecial: true },
+  { label: 'ITA@Beograd', url: '/about' },
+];
+---
+
+<header class="h-full flex flex-row justify-around">
+  <div class="flex md:flex-col flex-row justify-between container max-w-5xl md:mx-auto relative md:px-0 px-2 pt-2">
+    <!-- Logo Section -->
+    <div class="flex flex-row justify-between items-center align-middle">
+      <a href="/">
+        <!-- Place logo1.png in public folder -->
+        <img 
+          src="/logo1.png" 
+          height="102" 
+          width="167" 
+          alt="ITA logo" 
+        />
+      </a>
+      <div class="hidden md:block">
+        <a href="/">
+          <h3 class="text-itaGray font-normal font-archivo px-2 my-2 cursor-pointer animate-pulse">
+            Italijanska Agencija za Spoljnu Trgovinu, Beograd
+          </h3>
+        </a>
+        <div class="flex flex-row">
+          <div class="bg-itaRed h-1 w-1 rounded-full translate-y-[-2px]"></div>
+          <div class="bg-itaLightGray h-[1px] w-full mx-1"></div>
+          <div class="bg-itaGreen h-1 w-1 rounded-full translate-y-[-2px]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <ul class="hidden md:flex flex-row text-itaGray space-x-3 h-full my-16 justify-between font-archivo uppercase">
+      {
+        navItems.map(({ label, url, isSpecial }) => (
+          <li>
+            <a 
+              href={url} 
+              class={`hover:text-itaDarkGray transition-colors duration-300 ${
+                isSpecial ? 'text-itaRed font-semibold hover:text-itaRed' : ''
+              }`}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Mobile Menu -->
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="mobileMenu -translate-y-full">
+    <div class="container mx-auto px-4">
+      <a href="/" class="flex justify-center mt-4 mb-8">
+        <img 
+          src="/negative.png" 
+          height="120" 
+          width="200" 
+          alt="ITA logo mobile" 
+        />
+      </a>
+      <ul class="flex flex-col w-full">
+        {
+          navItems.map(({ label, url }) => (
+            <li class="mobileBtn border-t border-white/20">
+              <a href={url}>{label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  
+  <style>
+    .mobileMenu {
+      @apply fixed top-0 left-0 w-full h-screen bg-[#006341] z-50;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .mobileBtn {
+      @apply text-white font-archivo uppercase py-3 text-center hover:text-gray-200 cursor-pointer;
+    }
+  
+    .mobileBtn:last-child {
+      @apply border-b border-white/20;
+    }
+  </style>
+
+    <!-- Mobile Menu Button -->
+    <button 
+      id="mobileMenuBtn"
+      class="md:hidden flex z-50 text-itaGreen"
+    >
+      <svg 
+        id="menuIcon" 
+        class="w-6 h-6" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<style>
+  .mobileMenu {
+    @apply fixed top-0 left-0 w-full h-screen bg-itaGreen flex flex-col items-center pt-20;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .mobileBtn {
+    @apply text-itaWhite font-archivo uppercase py-4 hover:text-gray-200 cursor-pointer;
+  }
+</style>
+
+<script>
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuIcon = document.getElementById('menuIcon');
+  let isOpen = false;
+
+  if (mobileMenuBtn && mobileMenu && menuIcon) {
+    mobileMenuBtn.addEventListener('click', () => {
+      isOpen = !isOpen;
+      
+      // Toggle menu visibility
+      mobileMenu.style.transform = isOpen ? 'translateY(0)' : 'translateY(-100%)';
+      
+      // Toggle button color
+      mobileMenuBtn.classList.toggle('text-itaWhite');
+      
+      // Update icon
+      menuIcon.innerHTML = isOpen 
+        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>`
+        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>`;
+    });
+  }
+</script>

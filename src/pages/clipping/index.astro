@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { contentfulClient } from '../../lib/contentful';
+
+// Get all clippings
+const entries = await contentfulClient.getEntries({
+  content_type: 'clipping',
+  order: '-sys.createdAt'
+});
+
+const clippings = entries.items;
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('sr-latn', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+---
+<Layout title="ITA Beograd u medijima">
+    <div class="flex-1 max-w-5xl mx-auto my-5 container md:mx-auto px-4">
+      <h2 class="font-archivo text-itaGreen font-bold text-xl my-2 text-center border-b-itaGreen border-b">
+        ITA Beograd u medijima
+      </h2>
+      
+      <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-5 my-8">
+        {clippings.map(clipping => (
+          <div class="flex flex-col h-[500px] p-4 shadow-md bg-white rounded-lg hover:shadow-lg transition-shadow duration-300" key={clipping.sys.id}>
+            <div class="text-sm text-center text-itaGreen h-[60px] flex items-center justify-center">
+              <h3 class="font-bold">{clipping.fields.title}</h3>
+            </div>
+            
+            <a 
+              href={clipping.fields.link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex-1 flex flex-col group"
+            >
+              {/* Updated image container with tilt and enhanced zoom */}
+              <div class="h-[250px] overflow-hidden relative perspective">
+                <div class="w-full h-full transform rotate-2 hover:rotate-0 transition-transform duration-500 overflow-hidden">
+                  {clipping.fields.picture ? (
+                    <img 
+                      src={`https:${clipping.fields.picture.fields.file.url}`}
+                      alt={clipping.fields.title}
+                      class="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                      No image available
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div class="h-[100px] flex flex-col justify-center items-center">
+                <p class="border border-itaGray px-4 py-2 my-2 group-hover:border-itaGreen transition-colors duration-300">
+                  {clipping.fields.source}
+                </p>
+                <p class="text-xs text-itaGray">
+                  {formatDate(clipping.fields.dateTime)}
+                </p>
+              </div>
+            </a>
+            
+            <div class="h-[50px] flex items-center justify-center mt-auto">
+              {clipping.fields.event && (
+                <a 
+                  href={`/events/${clipping.fields.event.fields.slug}`}
+                  class="bg-itaGreen text-itaWhite text-center px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors duration-300 text-xs"
+                >
+                  {clipping.fields.event.fields.title}
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Layout>
+  
+  <style>
+    /* Add perspective for 3D effect */
+    .perspective {
+      perspective: 1000px;
+    }
+  
+    /* Optional: Add a subtle shadow effect */
+    .transform {
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+  </style>

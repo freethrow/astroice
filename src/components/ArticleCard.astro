@@ -1,0 +1,26 @@
+---
+const { article } = Astro.props;
+---
+
+<a href={`/articles/${article.fields.slug}`} class="block h-full">
+  <div class="w-full p-4 shadow-md flex flex-col h-[500px] cursor-pointer hover:shadow-lg transition-shadow duration-300">    
+    <div class="font-archivo text-itaGreen font-semibold h-[60px] flex items-center justify-center text-center">
+      {article.fields.title}
+    </div>
+    
+    <div class="opacity-50 hover:opacity-100 transition-opacity duration-300 flex-1 m-2 h-[350px] overflow-hidden">
+      <img 
+        src={`https:${article.fields.cover.fields.file.url}`}
+        width={article.fields.cover.fields.file.details.image.width}
+        height={article.fields.cover.fields.file.details.image.height}
+        alt={article.fields.title}
+        loading="lazy"
+        class="w-full h-full object-contain"
+      />
+    </div>
+    
+    <div class="text-sm font-normal text-itaGray h-[90px] overflow-hidden text-center">
+      {article.fields.short}
+    </div>
+  </div>
+</a>

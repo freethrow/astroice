@@ -1,0 +1,24 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getAllArticles } from '../../lib/contentful';
+
+const articles = await getAllArticles();
+const serbianArticles = articles.filter(
+  article => article.fields.category?.fields.title === 'serbian'
+);
+---
+
+<Layout title="Novosti">
+  <div class="flex-1 max-w-5xl mx-auto my-5 container md:mx-auto px-4">
+    <h2 class="font-archivo text-itaGreen font-bold text-xl my-2 text-center border-b-itaGreen border-b">
+      Novosti
+    </h2>
+    
+    <div class="grid md:grid-cols-2 gap-5">
+      {serbianArticles.map(article => (
+        <ArticleCard article={article} />
+      ))}
+    </div>
+  </div>
+</Layout>

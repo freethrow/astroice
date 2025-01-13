@@ -1,0 +1,100 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { BiMailSend } from 'react-icons/bi';
+---
+
+<Layout title="O Agenciji">
+  <div class="flex flex-col container max-w-5xl md:mx-auto px-2 md:px-0">
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Info Section -->
+      <div class="my-5 h-full flex flex-col justify-center">
+        <h2 class="font-archivo text-itaGreen font-semibold border-b-itaGreen border-b">
+          O Agenciji
+        </h2>
+        
+        <div class="text-itaGray my-4 text-base font-light leading-relaxed text-justify space-y-4">
+          <p class="my-2">
+            <span class="text-itaGreen font-normal">ICE – Agencija za promociju spoljne trgovine i internacionalizaciju italijanskih preduzeća</span>
+            je vladina ustanova preko koje Vlada Italije podržava konsolidaciju i trgovinsko-ekonomski razvoj italijanskih firmi na inostranim tržištima. 
+            Agencija deluje i kao subjekat ovlašćen da promoviše privlačenje stranih investicija u Italiju.
+          </p>
+          
+          <p class="my-2">
+            Kao dinamična, moderna organizacija, uz podršku razgranate mreže kancelarija u inostranstvu, ICE vrši aktivnosti informisanja,
+            podrške, konsaltinga, promocije i obuke za mala i srednja italijanska preduzeća. Zahvaljujući upotrebi 
+            najsavremenijih instrumenata promocije i višestrukih kanala komunikacije, ICE radi na 
+            afirmisanju izuzetnih proizvoda i usluga <span class="text-itaGreen font-normal">Made in Italy</span> u svetu.
+          </p>
+          
+          <p class="my-2">
+            Detaljnije informacije su dostupne na matičnom sajtu Agencije: 
+            <a 
+              href="http://www.ice.it" 
+              class="text-itaGreen hover:text-itaGray transition-colors duration-500"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              www.ice.it
+            </a>
+          </p>
+        </div>
+
+        <!-- Contact Section -->
+        <h2 class="font-archivo text-itaGreen font-semibold border-b-itaGreen border-b p-1">
+          Kontakt
+        </h2>
+        
+        <div class="text-itaGray my-4 text-base font-light space-y-2">
+          <p>Adresa: Kneza Miloša 56, 11000 Beograd</p>
+          <p>Telefon: +381 11 362-9939</p>
+          <p>
+            <a 
+              href="mailto:belgrado@ice.it" 
+              class="text-itaGreen hover:text-itaGray transition-colors duration-300"
+            >
+              Email: belgrado@ice.it
+            </a>
+          </p>
+          <p>
+            <a 
+              href="http://www.ice.it" 
+              class="text-itaGreen hover:text-itaGray transition-colors duration-300"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Sajt Agencije: www.ice.it
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Image Section -->
+      <div class="w-full md:max-w-full mx-auto p-4 shadow-lg bg-white rounded-lg">
+        <img
+          src="/palazzo-italia.jpg"
+          alt="Palazzo Italia"
+          width={1140}
+          height={887}
+          class="w-full rounded-lg"
+        />
+        <h2 class="font-archivo text-itaRed font-semibold border-b-itaGreen border-b mt-4">
+          Palata Italija, Kneza Miloša 56, Beograd
+        </h2>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .grid {
+    align-items: start;
+  }
+  
+  @media (min-width: 768px) {
+    .grid > div:first-child {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+</style>

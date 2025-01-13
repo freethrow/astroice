@@ -1,0 +1,176 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Map from '../../components/Map.astro';
+import { getAllEvents, getEventAndClippings } from '../../lib/contentful';
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import { GrDocumentVerified, GrLink } from 'react-icons/gr';
+
+export async function getStaticPaths() {
+ const events = await getAllEvents();
+ return events.map(event => ({
+   params: { slug: event.fields.slug },
+   props: { slug: event.fields.slug }
+ }));
+}
+
+const { slug } = Astro.props;
+const { event, clippings } = await getEventAndClippings(slug);
+
+// Format date
+const eventDateTime = new Date(event.fields.eventTime);
+const formattedDate = eventDateTime.toLocaleDateString('sr-latn', {
+ weekday: 'long',
+ year: 'numeric',
+ month: 'long',
+ day: 'numeric'
+});
+
+// Format date function
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('sr-latn', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// Format event date
+
+// Convert rich text to HTML
+const content = documentToHtmlString(event.fields.detailed);
+
+// Location for map
+const position = [event.fields.location.lat, event.fields.location.lon];
+---
+
+<Layout title={event.fields.title}>
+ <div class="container max-w-5xl md:mx-auto px-2 md:px-0">
+   <div class="flex flex-col items-center justify-center align-top relative mt-5">
+     <div class="grid md:grid-cols-2 z-20 gap-5 max-w-5xl md:mx-auto mx-2 my-2 px-3">
+       <!-- Left Column - Event Details -->
+       <div>
+         <div class="p-8 shadow-lg my-4 bg-itaWhite rounded-t-xl">
+           <h2 class="font-archivo text-itaGreen font-semibold border-b-itaGreen border-b">
+             {event.fields.title}
+           </h2>
+           <div class="prose prose-p:my-2 prose-sm prose-ul:list-none prose-ol:font-bold prose-a:text-itaGreen prose-a:font-light prose-a:decoration-0"
+             set:html={content}
+           />
+           <div class="font-archivo text-itaGray">
+             Vreme: <span class="font-archivo text-itaGreen font-semibold">{formattedDate}</span>
+           </div>
+         </div>
+
+         {clippings.length > 0 && (
+           <div class="p-8 shadow-lg my-4 bg-itaWhite rounded-t-xl">
+             <h2 class="font-archivo text-itaGreen font-semibold text-center border-b-itaGreen border-b mb-4">
+               U medijima
+             </h2>
+             <div class="space-y-4">
+               {clippings.map(clipping => (
+                 <a 
+                   href={clipping.fields.link}
+                   target="_blank"
+                   rel="noopener noreferrer" 
+                   class="block p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
+                 >
+                   <h3 class="font-medium text-itaGreen mb-2">
+                     {clipping.fields.title}
+                   </h3>
+                   <div class="flex justify-between items-center text-sm text-itaGray">
+                     <span class="font-medium">
+                       {clipping.fields.source}
+                     </span>
+                     <time>
+                       {formatDate(clipping.fields.dateTime)}
+                     </time>
+                   </div>
+                 </a>
+               ))}
+             </div>
+           </div>
+         )}
+       </div>
+
+       <!-- Right Column - Image and Additional Info -->
+       <div>
+         <div class="w-full hidden md:block">
+           <img 
+             src={`https:${event.fields.cover.fields.file.url}`}
+             width={event.fields.cover.fields.file.details.image.width}
+             height={event.fields.cover.fields.file.details.image.height}
+             alt={event.fields.title}
+             transition:name={`image-${event.fields.slug}`}
+             class="w-full"
+           />
+         </div>
+
+         <div class="p-8 shadow-lg my-4 bg-itaWhite rounded-t-xl">
+           {event.fields.links && (
+             <>
+               <h2 class="font-archivo text-itaGreen font-semibold text-center border-b-itaGreen border-b">
+                 Korisni linkovi
+               </h2>
+               {event.fields.links.map(link => (
+                 <a 
+                   href={link.fields.link}
+                   class="text-itaGray my-2 hover:text-itaRed cursor-pointer font-medium text-sm flex flex-row justify-start align-middle items-center space-x-2"
+                 >
+                   <GrLink size={16} />
+                   <span>{link.fields.description}</span>
+                 </a>
+               ))}
+             </>
+           )}
+
+           {event.fields.documents && (
+             <>
+               <h2 class="font-archivo text-itaGreen font-semibold text-center my-5 border-b-itaGreen border-b">
+                 Dokumenti
+               </h2>
+               {event.fields.documents.map(doc => (
+                 <a 
+                   href={`https:${doc.fields.file.url}`}
+                   class="text-itaGray my-2 hover:text-itaRed cursor-pointer font-medium text-sm flex flex-row justify-start align-middle items-center space-x-2"
+                   download
+                 >
+                   <GrDocumentVerified size={16} />
+                   <span>{doc.fields.title}</span>
+                 </a>
+               ))}
+             </>
+           )}
+
+           <h2 class="font-archivo text-itaGreen font-semibold text-center my-5 border-b-itaGreen border-b">
+             Mapa
+           </h2>
+           <div class="location">
+             <Map position={position} />
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+</Layout>
+
+<style>
+ :global(.prose) {
+   @apply max-w-none;
+ }
+ :global(.prose a) {
+   @apply text-itaGreen no-underline font-light;
+ }
+ :global(.prose ul) {
+   @apply list-none;
+ }
+ :global(.prose ol) {
+   @apply font-bold;
+ }
+ :global(.leaflet-container) {
+   z-index: 1;
+ }
+</style>

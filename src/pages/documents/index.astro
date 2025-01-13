@@ -1,0 +1,48 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllDocuments } from '../../lib/contentful';
+import { FaFilePdf } from 'react-icons/fa';
+
+const documents = await getAllDocuments();
+---
+
+<Layout title="Documents">
+  <div class="container max-w-5xl mx-auto px-4 py-8">
+    <h2 class="font-archivo text-itaGreen font-bold text-xl mb-12 text-center border-b-itaGreen border-b">
+      Dokumenti
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {documents.map(doc => (
+        <div class="bg-white p-3 m-3 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-[120px] justify-between">
+          <h3 class="text-itaGray font-semibold mb-4 line-clamp-2">
+            {doc.fields.title}
+          </h3>
+          
+          <a 
+            href={`https:${doc.fields.document[0].fields.file.url}`}
+            class="group flex items-center gap-3 text-itaGray hover:text-itaRed transition-colors duration-300 mt-auto"
+            download
+          >
+            <FaFilePdf 
+              className="text-itaRed group-hover:scale-110 transition-transform duration-300 flex-shrink-0" 
+              size={24}
+            />
+            <span class="text-sm line-clamp-1">
+              {doc.fields.document[0].fields.title}
+            </span>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .grid > div {
+    transition: all 0.3s ease;
+  }
+  .grid > div:hover {
+    transform: translateY(-2px);
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+// Import necessary components
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ViewTransitions } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "Default Title",
+  description = "Default description"
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description}>
+    <title>{title}</title>
+    <ViewTransitions fallback="none" />
+    
+    <!-- Fonts from your _document.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700&family=Roboto:wght@100;400;500&display=swap" 
+      rel="stylesheet"
+    />
+    
+    <!-- Leaflet CSS -->
+    <link 
+      rel="stylesheet" 
+      href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+      crossorigin
+    />
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col mx-auto bg-itaWhite">
+      <Header />
+      <main class="flex-1" transition:animate="fade">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    
+    <!-- Scripts from your _document.js -->
+    <script 
+      src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+      crossorigin
+    ></script>
+    <script async src="//static.getclicky.com/101371268.js"></script>
+  </body>
+</html>
+
+<style>
+  /* Base fade animation */
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  :root {
+    --animation-duration: 400ms;
+  }
+
+  /* Apply to all pages */
+  main {
+    animation: fade var(--animation-duration) ease both;
+  }
+
+  /* Shared transition styles */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+</style>
