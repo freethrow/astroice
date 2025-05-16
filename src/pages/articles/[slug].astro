@@ -13,6 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
+
 const contentHtml = documentToHtmlString(article.fields.content);
 ---
 
@@ -58,8 +59,32 @@ const contentHtml = documentToHtmlString(article.fields.content);
           ))}
         </div>
       </div>
+
+      
     )}
   </article>
+
+  {article.fields.documents && (
+    <div class="container max-w-4xl mx-auto mt-12">
+      <div class="bg-gray-50 rounded-lg p-6">
+        <h2 class="font-archivo text-itaGreen text-xl font-semibold mb-4 pb-2 border-b border-itaGreen">
+          Related Documents
+        </h2>
+        <div class="space-y-3">
+          {article.fields.documents.map(document => (
+            <a 
+              href={`https:${document.fields.document[0].fields.file.url}`}
+              class="flex items-center gap-3 p-3 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow duration-300 text-itaGray hover:text-itaRed group"
+              download
+            >
+              <GrDocumentVerified size={20} />
+              <span class="font-medium">{document.fields.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
 </Layout>
 
 <style is:global>
