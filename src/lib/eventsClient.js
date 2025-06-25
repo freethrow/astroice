@@ -126,7 +126,7 @@ export async function getUpcomingEvents(limit = 10) {
  * @param {number} limit - Maximum number of events to return
  * @returns {Promise<Array>} - Array of past events
  */
-export async function getPastEvents(limit = 10) {
+/* export async function getPastEvents(limit = 10) {
   const events = await getAllEvents();
   const today = new Date();
   
@@ -134,7 +134,7 @@ export async function getPastEvents(limit = 10) {
     .filter(event => new Date(event.data_fine) < today)
     .sort((a, b) => new Date(b.data_fine) - new Date(a.data_fine))
     .slice(0, limit);
-}
+} */
 
 /**
  * Search events by title or description
