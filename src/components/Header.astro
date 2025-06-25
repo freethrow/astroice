@@ -61,14 +61,7 @@ const navItems = [
 <!-- Mobile Menu -->
 <div id="mobileMenu" class="mobileMenu -translate-y-full">
     <div class="container mx-auto px-4">
-      <a href="/" class="flex justify-center mt-4 mb-8">
-        <img 
-          src="/negative.png" 
-          height="120" 
-          width="200" 
-          alt="ITA logo mobile" 
-        />
-      </a>
+
       <ul class="flex flex-col w-full">
         {
           navItems.map(({ label, url }) => (
@@ -84,7 +77,7 @@ const navItems = [
   <style>
     .mobileMenu {
       @apply fixed top-0 left-0 w-full h-screen bg-[#006341] z-50;
-      transform: translateY(-100%);
+      transform: translateX(-100%);
       transition: transform 0.3s ease-in-out;
     }
   
@@ -123,7 +116,7 @@ const navItems = [
 <style>
   .mobileMenu {
     @apply fixed top-0 left-0 w-full h-screen bg-itaGreen flex flex-col items-center pt-20;
-    transform: translateY(-100%);
+    transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
   }
 
@@ -143,7 +136,7 @@ const navItems = [
       isOpen = !isOpen;
       
       // Toggle menu visibility
-      mobileMenu.style.transform = isOpen ? 'translateY(0)' : 'translateY(-100%)';
+      mobileMenu.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
       
       // Toggle button color
       mobileMenuBtn.classList.toggle('text-itaWhite');

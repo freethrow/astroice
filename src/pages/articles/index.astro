@@ -7,6 +7,21 @@ const articles = await getAllArticles();
 const serbianArticles = articles.filter(
   article => article.fields.category?.fields.title === 'serbian'
 );
+import {  getPastEvents } from '../../lib/eventsClient';
+const events = await getPastEvents();
+
+function formatSerbianDate(dateString) {
+  const date = new Date(dateString);
+  
+  // Format using Serbian locale - 'sr-Latn-RS' for Latin script, 'sr-Cyrl-RS' for Cyrillic
+  const formatter = new Intl.DateTimeFormat('sr-Latn-RS', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+  
+  return formatter.format(date); // Returns: "17.02.2024."
+}
 ---
 
 <Layout title="Novosti">
@@ -20,5 +35,27 @@ const serbianArticles = articles.filter(
         <ArticleCard article={article} />
       ))}
     </div>
+
+   <hr/>
+  <div class="grid md:grid-cols-3 gap-4 my-3">
+    
+      {events.map((event, index) => (
+      
+        <div class="border border-gray-300 p-4 shadow-md flex flex-col justify-between align-top hover:shadow-sm transition-all duration-300">
+          <div>
+            <span class="text-itaGreen opacity-15 font-extrabold text-xl my-2">{formatSerbianDate(event.data_inizio)}</span>
+            <hr class="my-1" />
+            <a href={`/events/${event.id}`}>
+            <h3 class="text-itaGreen font-bold font-archivo text-lg text-pretty">{event.title_rs}</h3>
+            <hr class="my-1" />
+          </div>
+       
+          </a>
+          <p class="text-itaGray font-thin text-justify">{event.info_rs}</p>
+          <span class="text-itaRed opacity-15 font-extrabold text-3xl my-3">{event.citta}</span>
+        </div>
+      ))}
+    
+  </div>
   </div>
 </Layout>
