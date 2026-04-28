@@ -1,0 +1,63 @@
+---
+import MinimalLayout from '../layouts/MinimalLayout.astro';
+import LocationsSection from '../components/designday/LocationsSection.jsx';
+import { mockLocations } from '../lib/mockLocations.js';
+
+const locations = [...mockLocations].sort((a, b) => a.order - b.order);
+---
+<MinimalLayout title="Design Day 2026">
+
+  <!-- Hero -->
+  <section style="background-color: #F5F0EB;">
+    <div class="max-w-6xl mx-auto flex flex-col-reverse md:flex-row min-h-[65vh]">
+
+      <!-- Left: text -->
+      <div class="flex flex-col justify-center px-8 py-12 md:w-1/2 gap-5">
+        <p class="font-archivo uppercase text-xs tracking-widest" style="color: #E05A42;">
+          Giornata del design italiano u svetu 2026
+        </p>
+        <h1 class="font-archivo font-bold text-4xl md:text-5xl leading-tight" style="color: #1C1C1A;">
+          RE-DIZAJN:
+        </h1>
+        <p class="font-roboto font-light text-2xl md:text-3xl leading-snug" style="color: #1C1C1A;">
+          regenerisati prostore, objekte, ideje, odnose
+        </p>
+        <p class="font-roboto text-lg" style="color: #1C1C1A;">
+          4. maj 2026, 17:30
+        </p>
+        <p class="font-roboto text-sm text-gray-500">
+          Rezidencija Ambasadora Italije, Birčaninova 9a
+        </p>
+        <a
+          href="/"
+          class="font-archivo uppercase tracking-widest text-xs mt-2 hover:opacity-70 transition-opacity self-start"
+          style="color: #E05A42;"
+        >
+          ← ITA Beograd
+        </a>
+      </div>
+
+      <!-- Right: invitation image -->
+      <div class="md:w-1/2">
+        <img
+          src="/designday2026.jpg"
+          alt="Design Day 2026 — pozivnica"
+          class="w-full h-full object-cover object-top"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section label -->
+  <div class="max-w-6xl mx-auto px-6 pt-10">
+    <h2 class="font-archivo font-bold uppercase tracking-widest text-sm" style="color: #E05A42;">
+      Učesnici
+    </h2>
+    <div class="h-px mt-2" style="background-color: #E05A42; opacity: 0.3;"></div>
+  </div>
+
+  <!-- Interactive map + grid -->
+  <LocationsSection client:only="react" locations={locations} />
+
+</MinimalLayout>
