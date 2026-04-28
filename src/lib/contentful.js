@@ -1,11 +1,75 @@
 import * as contentful from 'contentful';
 
-// Create the contentful client
-export const contentfulClient = contentful.createClient({
-  space: import.meta.env.CONTENTFUL_SPACE_ID,
-  accessToken: import.meta.env.CONTENTFUL_ACCESS_KEY
-});
+// For debugging - log environment variables if they exist
+console.log('Environment variables check:');
+console.log('PUBLIC_CONTENTFUL_SPACE_ID:', import.meta.env.PUBLIC_CONTENTFUL_SPACE_ID);
+console.log('PUBLIC_CONTENTFUL_DELIVERY_TOKEN:', import.meta.env.PUBLIC_CONTENTFUL_DELIVERY_TOKEN);
+console.log('PUBLIC_CONTENTFUL_ACCESS_TOKEN:', import.meta.env.PUBLIC_CONTENTFUL_ACCESS_TOKEN);
 
+// Create the contentful client
+let contentfulClient;
+
+// Set up with explicit error handling
+try {
+  contentfulClient = contentful.createClient({
+    space: import.meta.env.PUBLIC_CONTENTFUL_SPACE_ID,
+    accessToken: import.meta.env.PUBLIC_CONTENTFUL_DELIVERY_TOKEN || import.meta.env.PUBLIC_CONTENTFUL_ACCESS_TOKEN
+  });
+  console.log('Contentful client created successfully');
+} catch (error) {
+  console.error('Error creating Contentful client:', error.message);
+  throw error;
+}
+
+// Export the client
+export { contentfulClient };
+
+// Image optimization helper functions
+export const optimizeImage = (imageField, options = {}) => {
+  if (!imageField?.fields?.file?.url) return null;
+  
+  const {
+    width = null,
+    height = null,
+    quality = 80,
+    format = 'webp',
+    fit = 'fill'
+  } = options;
+  
+  let url = `https:${imageField.fields.file.url}`;
+  const params = [];
+  
+  if (width) params.push(`w=${width}`);
+  if (height) params.push(`h=${height}`);
+  if (quality) params.push(`q=${quality}`);
+  if (format) params.push(`fm=${format}`);
+  if (fit) params.push(`fit=${fit}`);
+  
+  if (params.length > 0) {
+    url = `${url}?${params.join('&')}`;
+  }
+  
+  return {
+    src: url,
+    width: width || imageField.fields.file.details.image.width,
+    height: height || imageField.fields.file.details.image.height,
+    alt: imageField.fields.title || '',
+    contentType: imageField.fields.file.contentType
+  };
+};
+
+// Generate responsive image sizes
+export const getResponsiveImageSet = (imageField) => {
+  if (!imageField?.fields?.file?.url) return null;
+  
+  return {
+    thumbnail: optimizeImage(imageField, { width: 300, height: 300 }),
+    small: optimizeImage(imageField, { width: 640 }),
+    medium: optimizeImage(imageField, { width: 1024 }),
+    large: optimizeImage(imageField, { width: 1600 }),
+    original: optimizeImage(imageField)
+  };
+};
 
 // Fetch entries with common params
 const fetchEntries = async (content_type, options = {}) => {

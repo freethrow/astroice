@@ -1,29 +1,42 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contentfulClient } from '../lib/contentful';
+import { Image } from 'astro:assets';
+import { contentfulClient, optimizeImage } from '../lib/contentful';
 
-// Fetch data
-const eventRes = await contentfulClient.getEntries({
-  content_type: 'event',
-  limit: 3,
-  order: '-sys.createdAt'
-});
+// Fetch data with error handling
+let events = [];
+let articles = [];
+let gallery = null;
 
-const articleRes = await contentfulClient.getEntries({
-  content_type: 'article',
-  limit: 2,
-  order: '-sys.createdAt'
-});
-
-const galleryRes = await contentfulClient.getEntries({
-  content_type: 'gallery',
-  limit: 1,
-  order: 'sys.createdAt'
-});
-
-const events = eventRes.items;
-const articles = articleRes.items;
-const gallery = galleryRes.items[0];
+try {
+  console.log('Fetching events...');
+  const eventRes = await contentfulClient.getEntries({
+    content_type: 'event',
+    limit: 3,
+    order: '-sys.createdAt'
+  });
+  events = eventRes.items || [];
+  console.log(`Fetched ${events.length} events`);
+  
+  console.log('Fetching articles...');
+  const articleRes = await contentfulClient.getEntries({
+    content_type: 'article',
+    limit: 2,
+    order: '-sys.createdAt'
+  });
+  articles = articleRes.items || [];
+  console.log(`Fetched ${articles.length} articles`);
+  
+  console.log('Fetching gallery...');
+  const galleryRes = await contentfulClient.getEntries({
+    content_type: 'gallery',
+    limit: 1,
+    order: 'sys.createdAt'
+  });
+  gallery = galleryRes.items && galleryRes.items.length > 0 ? galleryRes.items[0] : null;
+} catch (error) {
+  console.error('Error fetching content:', error);
+}
 
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -48,11 +61,13 @@ function isEventPast(eventTime) {
   return eventDate < now;
 }
 
-const eventTitle = events[0] ? (
-  isEventPast(events[0].fields.eventTime) ? 
+// Safely determine event title
+let eventTitle = "Događaji"; // Default title
+if (events[0] && events[0]?.fields?.eventTime) {
+  eventTitle = isEventPast(events[0].fields.eventTime) ? 
     "Poslednji događaj" : 
-    "Najava događaja"
-) : "Događaji";
+    "Najava događaja";
+}
 
 const randomVideo = getRandomVideo();
 ---
@@ -79,15 +94,18 @@ const randomVideo = getRandomVideo();
         <h2 class="font-archivo text-itaGreen font-bold text-xl border-itaGreen my-2 border-b-2">
           {eventTitle}
         </h2>
-        {events[0] && (
+        {events[0] && events[0]?.fields?.slug && events[0]?.fields?.title && events[0]?.fields?.cover?.fields?.file?.url && (
           <div class="bg-white shadow-lg rounded-lg overflow-hidden h-[500px]">
             <a href={`/events/${events[0].fields.slug}`} class="flex flex-col h-full">
               <div class="h-[300px] overflow-hidden">
-                <img 
-                  src={`https:${events[0].fields.cover.fields.file.url}`}
+                <Image 
+                  src={optimizeImage(events[0].fields.cover, {width: 800, height: 400, fit: 'fill'})?.src || ''}
                   alt={events[0].fields.title}
                   width={800}
                   height={400}
+                  loading="eager"
+                  format="webp"
+                  quality={85}
                   class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
               </div>
@@ -96,7 +114,7 @@ const randomVideo = getRandomVideo();
                   {events[0].fields.title}
                 </h3>
                 <p class="text-itaGray mb-4 line-clamp-3 flex-1">
-                  {events[0].fields.short}
+                  {events[0].fields.short || ''}
                 </p>
                 <time class="text-sm text-itaGray mt-auto">
                   {formatDate(events[0].fields.eventTime)}
@@ -113,28 +131,42 @@ const randomVideo = getRandomVideo();
           Novosti
         </h2>
         <div class="space-y-4">
-          {articles.map(article => (
-            <a 
-              href={`/articles/${article.fields.slug}`}
-              class="block bg-white shadow hover:shadow-md transition-shadow duration-300 rounded-lg overflow-hidden h-[240px]"
-            >
-              <div class="h-[140px] overflow-hidden">
-                <img 
-                  src={`https:${article.fields.cover.fields.file.url}`}
-                  alt={article.fields.title}
-                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div class="p-4 h-[100px] flex flex-col">
-                <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
-                  {article.fields.title}
-                </h3>
-                <time class="text-sm text-itaGray mt-auto">
-                  {formatDate(article.fields.date)}
-                </time>
-              </div>
-            </a>
-          ))}
+          {articles.map(article => {
+            // Check if article has all required fields
+            const hasRequiredFields = article?.fields?.slug && 
+                                      article?.fields?.title && 
+                                      article?.fields?.cover?.fields?.file?.url;
+            
+            if (!hasRequiredFields) return null;
+            
+            return (
+              <a 
+                href={`/articles/${article.fields.slug}`}
+                class="block bg-white shadow hover:shadow-md transition-shadow duration-300 rounded-lg overflow-hidden h-[240px]"
+              >
+                <div class="h-[140px] overflow-hidden">
+                  <Image 
+                    src={optimizeImage(article.fields.cover, {width: 400, height: 200, fit: 'fill'})?.src || ''}
+                    alt={article.fields.title}
+                    width={400}
+                    height={200}
+                    loading="lazy"
+                    format="webp"
+                    quality={80}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div class="p-4 h-[100px] flex flex-col">
+                  <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
+                    {article.fields.title}
+                  </h3>
+                  <time class="text-sm text-itaGray mt-auto">
+                    {formatDate(article.fields.date)}
+                  </time>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -147,33 +179,42 @@ const randomVideo = getRandomVideo();
           Najnoviji događaji
         </h2>
         <div class="space-y-6">
-          {events.slice(1,3).map(event => (
-            <a 
-              href={`/events/${event.fields.slug}`}
-              class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
-            >
-              <div class="flex h-full">
-                <div class="w-1/3 overflow-hidden">
-                  <img 
-                    src={`https:${event.fields.cover.fields.file.url}`}
-                    alt={event.fields.title}
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
+          {events.slice(1,3).map(event => {
+            // Check if event has all required fields
+            const hasRequiredFields = event?.fields?.slug && 
+                                     event?.fields?.title && 
+                                     event?.fields?.cover?.fields?.file?.url;
+            
+            if (!hasRequiredFields) return null;
+            
+            return (
+              <a 
+                href={`/events/${event.fields.slug}`}
+                class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
+              >
+                <div class="flex h-full">
+                  <div class="w-1/3 overflow-hidden">
+                    <img 
+                      src={`https:${event.fields.cover.fields.file.url}`}
+                      alt={event.fields.title}
+                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div class="w-2/3 p-4 flex flex-col">
+                    <h3 class="font-archivo text-itaGreen font-medium mb-2 line-clamp-2">
+                      {event.fields.title}
+                    </h3>
+                    <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
+                      {event.fields.short || ''}
+                    </p>
+                    <time class="text-sm text-itaGray mt-auto">
+                      {formatDate(event.fields.eventTime)}
+                    </time>
+                  </div>
                 </div>
-                <div class="w-2/3 p-4 flex flex-col">
-                  <h3 class="font-archivo text-itaGreen font-medium mb-2 line-clamp-2">
-                    {event.fields.title}
-                  </h3>
-                  <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
-                    {event.fields.short}
-                  </p>
-                  <time class="text-sm text-itaGray mt-auto">
-                    {formatDate(event.fields.eventTime)}
-                  </time>
-                </div>
-              </div>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </div>
 
@@ -183,33 +224,42 @@ const randomVideo = getRandomVideo();
           Najnoviji članci
         </h2>
         <div class="space-y-6">
-          {articles.slice(0, 2).map(article => (
-            <a 
-              href={`/articles/${article.fields.slug}`}
-              class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
-            >
-              <div class="flex h-full">
-                <div class="w-1/3 overflow-hidden">
-                  <img 
-                    src={`https:${article.fields.cover.fields.file.url}`}
-                    alt={article.fields.title}
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
+          {articles.slice(0, 2).map(article => {
+            // Check if article has all required fields
+            const hasRequiredFields = article?.fields?.slug && 
+                                     article?.fields?.title && 
+                                     article?.fields?.cover?.fields?.file?.url;
+            
+            if (!hasRequiredFields) return null;
+            
+            return (
+              <a 
+                href={`/articles/${article.fields.slug}`}
+                class="block bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden h-[160px]"
+              >
+                <div class="flex h-full">
+                  <div class="w-1/3 overflow-hidden">
+                    <img 
+                      src={`https:${article.fields.cover.fields.file.url}`}
+                      alt={article.fields.title}
+                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div class="w-2/3 p-4 flex flex-col">
+                    <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
+                      {article.fields.title}
+                    </h3>
+                    <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
+                      {article.fields.short || ''}
+                    </p>
+                    <time class="text-sm text-itaGray mt-auto">
+                      {formatDate(article.fields.date)}
+                    </time>
+                  </div>
                 </div>
-                <div class="w-2/3 p-4 flex flex-col">
-                  <h3 class="font-archivo text-itaGray font-medium mb-2 line-clamp-2">
-                    {article.fields.title}
-                  </h3>
-                  <p class="text-sm text-itaGray mb-2 line-clamp-2 flex-1">
-                    {article.fields.short}
-                  </p>
-                  <time class="text-sm text-itaGray mt-auto">
-                    {formatDate(article.fields.date)}
-                  </time>
-                </div>
-              </div>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>

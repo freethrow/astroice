@@ -58,9 +58,11 @@ const navItems = [
     </ul>
 
     <!-- Mobile Menu -->
-<!-- Mobile Menu -->
-<div id="mobileMenu" class="mobileMenu -translate-y-full">
+<div id="mobileMenu" class="mobileMenu">
     <div class="container mx-auto px-4">
+      <a href="/" class="mb-8 block">
+        <img src="/negative.png" width="120" alt="ITA logo" />
+      </a>
 
       <ul class="flex flex-col w-full">
         {
@@ -73,27 +75,11 @@ const navItems = [
       </ul>
     </div>
   </div>
-  
-  <style>
-    .mobileMenu {
-      @apply fixed top-0 left-0 w-full h-screen bg-[#006341] z-50;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-    }
-  
-    .mobileBtn {
-      @apply text-white font-archivo uppercase py-3 text-center hover:text-gray-200 cursor-pointer;
-    }
-  
-    .mobileBtn:last-child {
-      @apply border-b border-white/20;
-    }
-  </style>
 
     <!-- Mobile Menu Button -->
-    <button 
+    <button
       id="mobileMenuBtn"
-      class="md:hidden flex z-50 text-itaGreen"
+      class="md:hidden flex relative z-50 text-itaGreen"
     >
       <svg 
         id="menuIcon" 
@@ -115,7 +101,7 @@ const navItems = [
 
 <style>
   .mobileMenu {
-    @apply fixed top-0 left-0 w-full h-screen bg-itaGreen flex flex-col items-center pt-20;
+    @apply fixed top-0 left-0 w-full h-screen bg-itaGreen flex flex-col items-center pt-20 z-40;
     transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
   }
@@ -126,25 +112,25 @@ const navItems = [
 </style>
 
 <script>
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const menuIcon = document.getElementById('menuIcon');
-  let isOpen = false;
+  function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    let isOpen = false;
 
-  if (mobileMenuBtn && mobileMenu && menuIcon) {
-    mobileMenuBtn.addEventListener('click', () => {
-      isOpen = !isOpen;
-      
-      // Toggle menu visibility
-      mobileMenu.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
-      
-      // Toggle button color
-      mobileMenuBtn.classList.toggle('text-itaWhite');
-      
-      // Update icon
-      menuIcon.innerHTML = isOpen 
-        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>`
-        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>`;
-    });
+    if (mobileMenuBtn && mobileMenu && menuIcon) {
+      mobileMenuBtn.addEventListener('click', () => {
+        isOpen = !isOpen;
+
+        mobileMenu.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
+        mobileMenuBtn.classList.toggle('text-itaWhite');
+        menuIcon.innerHTML = isOpen
+          ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>`
+          : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>`;
+      });
+    }
   }
+
+  // Runs on initial load and after every Astro page navigation
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>

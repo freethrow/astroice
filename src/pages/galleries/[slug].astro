@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getAllGalleries } from '../../lib/contentful';
+import { getAllGalleries, getResponsiveImageSet } from '../../lib/contentful';
 
 export async function getStaticPaths() {
   const galleries = await getAllGalleries();
@@ -13,18 +13,23 @@ export async function getStaticPaths() {
 
 const { gallery } = Astro.props;
 
-// Prepare optimized photos array with different sizes
-const photos = gallery.fields.media.map(picture => ({
-  src: `https:${picture.fields.file.url}`,
-  width: picture.fields.file.details.image.width,
-  height: picture.fields.file.details.image.height,
-  alt: gallery.fields.title,
-  // Add optimized URLs for different sizes
-  sizes: {
-    thumbnail: `https:${picture.fields.file.url}?w=300&h=300&fit=fill&fm=webp`,
-    full: `https:${picture.fields.file.url}?w=1200&fm=webp`,
-  }
-}));
+// Safely check if gallery has media field
+const galleryMedia = gallery?.fields?.media || [];
+
+// Prepare optimized photos array with different sizes using the helper function
+const photos = galleryMedia.map(picture => {
+  const imageSet = getResponsiveImageSet(picture);
+  return {
+    src: imageSet.medium.src,
+    width: imageSet.medium.width,
+    height: imageSet.medium.height,
+    alt: gallery.fields.title || 'Gallery image',
+    thumbnail: imageSet.thumbnail.src,
+    full: imageSet.large.src,
+    original: imageSet.original.src
+  };
+});
+
 ---
 
 <Layout title={gallery.fields.title}>
@@ -39,12 +44,15 @@ const photos = gallery.fields.media.map(picture => ({
           class="gallery-item aspect-square cursor-pointer bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
           data-index={index}
         >
-          <img
-            src={photo.sizes.thumbnail}
+          <Image
+            src={photo.thumbnail}
             alt={photo.alt}
+            width={300}
+            height={300}
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-            data-full={photo.sizes.full}
+            data-full={photo.full}
           />
         </div>
       ))}
@@ -105,7 +113,7 @@ const photos = gallery.fields.media.map(picture => ({
     
     function showImage(index) {
       currentIndex = index;
-      const fullSizeUrl = photos[index].sizes.full;
+      const fullSizeUrl = photos[index].full;
       lightboxImg.src = fullSizeUrl;
       lightboxImg.alt = photos[index].alt;
       currentIndexDisplay.textContent = index + 1;
@@ -113,11 +121,11 @@ const photos = gallery.fields.media.map(picture => ({
       // Preload adjacent images
       if (index < photos.length - 1) {
         const nextImg = new Image();
-        nextImg.src = photos[index + 1].sizes.full;
+        nextImg.src = photos[index + 1].full;
       }
       if (index > 0) {
         const prevImg = new Image();
-        prevImg.src = photos[index - 1].sizes.full;
+        prevImg.src = photos[index - 1].full;
       }
     }
     
