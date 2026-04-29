@@ -2,6 +2,8 @@
 import MinimalLayout from "../layouts/MinimalLayout.astro";
 import LocationsSection from "../components/designday/LocationsSection.jsx";
 import { mockLocations } from "../lib/mockLocations.js";
+import { Image } from "astro:assets";
+import posterImage from "../assets/designday2026.jpg";
 
 const locations = [...mockLocations].sort((a, b) => a.order - b.order);
 ---
@@ -57,10 +59,12 @@ const locations = [...mockLocations].sort((a, b) => a.order - b.order);
         class="md:w-1/2 overflow-hidden"
         style="border: 12px solid white; margin-top: 2rem;"
       >
-        <img
-          src="/designday2026.jpg"
+        <Image
+          src={posterImage}
           alt="Design Day 2026 — pozivnica"
           class="w-full h-full object-cover object-top transition-transform duration-700 ease-in-out hover:scale-105"
+          fetchpriority="high"
+          loading="eager"
         />
       </div>
     </div>

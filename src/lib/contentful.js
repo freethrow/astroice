@@ -2,8 +2,8 @@ import * as contentful from 'contentful';
 
 // Create the contentful client
 const contentfulClient = contentful.createClient({
-  space: import.meta.env.CONTENTFUL_SPACE_ID,
-  accessToken: import.meta.env.CONTENTFUL_ACCESS_KEY,
+  space: import.meta.env.CONTENTFUL_SPACE_ID ?? import.meta.env.PUBLIC_CONTENTFUL_SPACE_ID,
+  accessToken: import.meta.env.CONTENTFUL_ACCESS_KEY ?? import.meta.env.PUBLIC_CONTENTFUL_ACCESS_TOKEN,
 });
 
 // Export the client
