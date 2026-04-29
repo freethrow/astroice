@@ -1,33 +1,48 @@
 ---
-import MinimalLayout from '../layouts/MinimalLayout.astro';
-import LocationsSection from '../components/designday/LocationsSection.jsx';
-import { mockLocations } from '../lib/mockLocations.js';
+import MinimalLayout from "../layouts/MinimalLayout.astro";
+import LocationsSection from "../components/designday/LocationsSection.jsx";
+import { mockLocations } from "../lib/mockLocations.js";
 
 const locations = [...mockLocations].sort((a, b) => a.order - b.order);
 ---
-<MinimalLayout title="Design Day 2026">
 
+<MinimalLayout title="Italian Design Day 2026 – Beograd">
   <!-- Hero -->
-  <section style="background-color: #F5F0EB;">
-    <div class="max-w-6xl mx-auto flex flex-col-reverse md:flex-row min-h-[65vh]">
-
+  <section style="background-color: #F5F0EB;" class="pt-10">
+    <div
+      class="max-w-6xl mx-auto flex flex-col-reverse md:flex-row min-h-[65vh]"
+    >
       <!-- Left: text -->
       <div class="flex flex-col justify-center px-8 py-12 md:w-1/2 gap-5">
-        <p class="font-archivo uppercase text-xs tracking-widest" style="color: #E05A42;">
-          Giornata del design italiano u svetu 2026
+        <p
+          class="font-archivo uppercase text-xs tracking-widest"
+          style="color: #E05A42;"
+        >
+          Italian Design Day 2026 – Beograd
         </p>
-        <h1 class="font-archivo font-bold text-4xl md:text-5xl leading-tight" style="color: #1C1C1A;">
-          RE-DIZAJN:
+        <h1
+          class="font-archivo font-bold text-3xl md:text-4xl leading-tight"
+          style="color: #1C1C1A;"
+        >
+          RE-DESIGN:
         </h1>
-        <p class="font-roboto font-light text-2xl md:text-3xl leading-snug" style="color: #1C1C1A;">
-          regenerisati prostore, objekte, ideje, odnose
+        <p
+          class="font-roboto font-light text-xl md:text-2xl leading-snug"
+          style="color: #1C1C1A;"
+        >
+          regenerisati prostore, predmete, ideje, odnose
         </p>
-        <p class="font-roboto text-lg" style="color: #1C1C1A;">
-          4. maj 2026, 17:30
-        </p>
-        <p class="font-roboto text-sm text-gray-500">
-          Rezidencija Ambasadora Italije, Birčaninova 9a
-        </p>
+        <a
+          href="/DD2026_program.pdf"
+          download
+          class="font-archivo font-bold uppercase tracking-widest text-xs inline-flex items-center gap-2 self-start px-5 py-3 rounded transition-opacity hover:opacity-80"
+          style="background-color: #E05A42; color: white;"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Preuzmi program (PDF)
+        </a>
         <a
           href="/"
           class="font-archivo uppercase tracking-widest text-xs mt-2 hover:opacity-70 transition-opacity self-start"
@@ -38,26 +53,205 @@ const locations = [...mockLocations].sort((a, b) => a.order - b.order);
       </div>
 
       <!-- Right: invitation image -->
-      <div class="md:w-1/2">
+      <div
+        class="md:w-1/2 overflow-hidden"
+        style="border: 12px solid white; margin-top: 2rem;"
+      >
         <img
           src="/designday2026.jpg"
           alt="Design Day 2026 — pozivnica"
-          class="w-full h-full object-cover object-top"
+          class="w-full h-full object-cover object-top transition-transform duration-700 ease-in-out hover:scale-105"
         />
       </div>
-
     </div>
   </section>
 
-  <!-- Section label -->
+  <!-- Description section -->
+  <section style="background-color: #F5F0EB;">
+    <div class="max-w-4xl mx-auto px-8 py-16 flex flex-col gap-10">
+      <!-- Date & venue -->
+      <div
+        class="flex flex-col gap-2 font-roboto text-base leading-relaxed text-center"
+        style="color: #1C1C1A;"
+      >
+        <p class="font-bold text-lg">4. maj 2026, 17.30</p>
+        <p class="text-gray-500 text-sm">(registracija od 17.00 časova)</p>
+        <p>Rezidencija ambasadora Italije, Birčaninova 9a</p>
+      </div>
+
+      <div class="h-px" style="background-color: #E05A42; opacity: 0.3;"></div>
+
+      <!-- Pozdravi -->
+      <div class="flex flex-col gap-3 text-center">
+        <h2
+          class="font-archivo uppercase tracking-widest text-sm"
+          style="color: #1C1C1A;"
+        >
+          pozdravi
+        </h2>
+        <div
+          class="font-roboto text-sm leading-relaxed flex flex-col gap-2"
+          style="color: #1C1C1A;"
+        >
+          <p><strong>NJ.E. Luka Gori</strong>, Ambasador Italije u Srbiji</p>
+          <p>
+            <strong>Antonio Ventreska</strong>, direktor kancelarije ICE u
+            Beogradu
+          </p>
+        </div>
+      </div>
+
+      <div class="h-px" style="background-color: #E05A42; opacity: 0.3;"></div>
+
+      <!-- Učestvuju -->
+      <div class="flex flex-col gap-4 text-center">
+        <h2
+          class="font-archivo uppercase tracking-widest text-sm"
+          style="color: #1C1C1A;"
+        >
+          učestvuju
+        </h2>
+        <p class="font-roboto text-xs italic text-gray-500">
+          Il Compasso d'Oro International Award 2025
+        </p>
+        <div
+          class="font-roboto text-sm leading-relaxed flex flex-col gap-4"
+          style="color: #1C1C1A;"
+        >
+          <p>
+            <strong>Antonela Andrijani</strong>, potpredsednica ADI Design
+          </p>
+          <p>
+            <strong>Frančesko Lukeze</strong>, dizajner, Studio Lucchesedesign<br
+            />
+            <span class="text-gray-500 text-xs">dobitnik Compasso d'Oro</span>
+          </p>
+          <p>
+            <strong>Davide Anđeli</strong>, Managing Director, AMDL CIRCLE
+          </p>
+          <p>
+            <strong>Mauricio Vala</strong>, direktor Alba Dominante doo,<br />
+            potpredsednik Confindustria Serbia
+          </p>
+        </div>
+      </div>
+
+      <div class="h-px" style="background-color: #E05A42; opacity: 0.3;"></div>
+    </div>
+  </section>
+
+  <!-- Fuori Salone intro -->
+  <section style="background-color: #F5F0EB;">
+    <div class="max-w-4xl mx-auto px-8 py-16 flex flex-col gap-10">
+      <div class="flex flex-col gap-3">
+        <h2
+          class="font-archivo font-bold uppercase tracking-widest text-sm"
+          style="color: #E05A42;"
+        >
+          „Fuori Salone Beograd" — grad kao izložbeni prostor
+        </h2>
+        <div
+          class="flex flex-col gap-4 font-roboto text-base leading-relaxed"
+          style="color: #1C1C1A;"
+        >
+          <p>
+            Paralelno sa institucionalnim seminarom, događaj se širi po gradu
+            kroz mrežu showroom-ova italijanskih brendova nameštaja. Po uzoru na
+            milanski model, italijanski proizvod postaje protagonista kroz
+            postavke, mikro-događaje, stručne seminare i tematske rute.
+          </p>
+        </div>
+      </div>
+
+      <!-- Program directions -->
+      <div class="flex flex-col gap-4">
+        <h2
+          class="font-archivo font-bold uppercase tracking-widest text-sm"
+          style="color: #E05A42;"
+        >
+          Programski pravci
+        </h2>
+        <ul
+          class="font-roboto text-sm leading-relaxed flex flex-col gap-3"
+          style="color: #1C1C1A;"
+        >
+          <li>
+            <strong style="color: #E05A42;">RE-DESIGNING VALUE</strong>
+            <span class="text-gray-600">
+              — od početne cene ka vrednosti u vremenu</span
+            >
+          </li>
+          <li>
+            <strong style="color: #E05A42;">RE-DESIGNING IDENTITY</strong>
+            <span class="text-gray-600">
+              — projekat, personalizacija i kultura proizvoda</span
+            >
+          </li>
+          <li>
+            <strong style="color: #E05A42;">RE-DESIGNING MATERIALS</strong>
+            <span class="text-gray-600">
+              — materija, tehnologija i evoluirano zanatstvo</span
+            >
+          </li>
+        </ul>
+        <p class="font-roboto text-xs text-gray-500">
+          Program traje tokom maja, počev od 5. maja 2026.
+        </p>
+      </div>
+
+      <div class="h-px" style="background-color: #E05A42; opacity: 0.3;"></div>
+
+      <!-- Visit note -->
+      <p
+        class="font-roboto text-md font-extrabold italic text-gray-700 text-center"
+      >
+        Posete showroom-ovima se zakazuju emailom.
+      </p>
+
+      <div class="h-px" style="background-color: #E05A42; opacity: 0.3;"></div>
+
+      <!-- Organizers -->
+      <div class="flex flex-col gap-3">
+        <h2
+          class="font-archivo font-bold uppercase tracking-widest text-sm"
+          style="color: #E05A42;"
+        >
+          Organizatori
+        </h2>
+        <p class="font-roboto text-sm leading-relaxed" style="color: #1C1C1A;">
+          Ambasada Italije u Beogradu · ITA – Agencija Beograd · Italijanski
+          institut za kulturu u Beogradu
+        </p>
+        <p class="font-roboto text-xs leading-relaxed text-gray-500">
+          U saradnji sa Italijansko-srpskom privrednom komorom, Confindustria
+          Serbia i mrežom showroom-ova italijanskih brendova nameštaja u Srbiji.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Učesnici label -->
   <div class="max-w-6xl mx-auto px-6 pt-10">
-    <h2 class="font-archivo font-bold uppercase tracking-widest text-sm" style="color: #E05A42;">
+    <h2
+      class="font-archivo font-bold uppercase tracking-widest text-sm"
+      style="color: #E05A42;"
+    >
       Učesnici
     </h2>
-    <div class="h-px mt-2" style="background-color: #E05A42; opacity: 0.3;"></div>
+    <div class="h-px mt-2" style="background-color: #E05A42; opacity: 0.3;">
+    </div>
   </div>
 
   <!-- Interactive map + grid -->
   <LocationsSection client:only="react" locations={locations} />
 
+  <div class="text-center py-10">
+    <a
+      href="/"
+      class="font-archivo uppercase tracking-widest text-xs hover:opacity-60 transition-opacity"
+      style="color: #E05A42;"
+    >
+      ← ITA Beograd
+    </a>
+  </div>
 </MinimalLayout>

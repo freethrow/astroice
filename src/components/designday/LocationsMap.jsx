@@ -1,7 +1,17 @@
-import { useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useMemo, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+
+function FitBounds({ locations }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!locations.length) return;
+    const bounds = L.latLngBounds(locations.map(l => [l.coordinates.lat, l.coordinates.lon]));
+    map.fitBounds(bounds, { padding: [48, 48] });
+  }, [map, locations]);
+  return null;
+}
 
 export default function LocationsMap({ locations, onMarkerClick }) {
   const center = [44.8125, 20.4612];
@@ -19,8 +29,9 @@ export default function LocationsMap({ locations, onMarkerClick }) {
   }), []);
 
   return (
-    <div style={{ height: '450px', width: '100%' }}>
+    <div style={{ height: '450px', width: '100%', position: 'relative' }}>
       <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
+        <FitBounds locations={locations} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -32,12 +43,19 @@ export default function LocationsMap({ locations, onMarkerClick }) {
             icon={pin}
             eventHandlers={{ click: () => onMarkerClick(loc.id) }}
           >
-            <Popup>
+            <Tooltip direction="top" offset={[0, -38]} opacity={1}>
               <strong>{loc.name}</strong><br />{loc.address}
-            </Popup>
+            </Tooltip>
           </Marker>
         ))}
       </MapContainer>
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(160, 55, 35, 0.45)',
+        pointerEvents: 'none',
+        zIndex: 900,
+      }} />
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function Lightbox({ location, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(28, 28, 26, 0.80)' }}
       onClick={onClose}
     >
@@ -25,7 +25,7 @@ export default function Lightbox({ location, onClose }) {
       >
         {/* Header row */}
         <div className="flex items-start gap-4">
-          <LogoPlaceholder name={location.name} size="lg" />
+          <LogoPlaceholder name={location.name} logo={location.logo} size="lg" />
           <div className="flex-1 min-w-0">
             <h2 className="font-archivo font-bold text-2xl leading-tight" style={{ color: '#1C1C1A' }}>
               {location.name}

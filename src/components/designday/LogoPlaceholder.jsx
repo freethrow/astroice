@@ -1,6 +1,24 @@
 const COLORS = ['#E05A42', '#C04A35', '#8B3A28', '#6B4E3D', '#A05040'];
 
-export default function LogoPlaceholder({ name, size = 'md' }) {
+export default function LogoPlaceholder({ name, logo, size = 'md' }) {
+  const sizeClass = size === 'lg' ? 'w-28 h-28' : 'w-20 h-20';
+
+  if (logo) {
+    const logos = Array.isArray(logo) ? logo : [logo];
+    return (
+      <div className="flex gap-2 flex-shrink-0 items-center">
+        {logos.map(src => (
+          <img
+            key={src}
+            src={src}
+            alt={name}
+            className={`${sizeClass} object-contain rounded`}
+          />
+        ))}
+      </div>
+    );
+  }
+
   const initials = name
     .split(' ')
     .slice(0, 2)
@@ -9,7 +27,6 @@ export default function LogoPlaceholder({ name, size = 'md' }) {
     .toUpperCase();
 
   const bg = COLORS[name.charCodeAt(0) % COLORS.length];
-  const sizeClass = size === 'lg' ? 'w-20 h-20 text-2xl' : 'w-14 h-14 text-lg';
 
   return (
     <div
