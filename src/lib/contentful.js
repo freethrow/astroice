@@ -1,25 +1,10 @@
 import * as contentful from 'contentful';
 
-// For debugging - log environment variables if they exist
-console.log('Environment variables check:');
-console.log('PUBLIC_CONTENTFUL_SPACE_ID:', import.meta.env.PUBLIC_CONTENTFUL_SPACE_ID);
-console.log('PUBLIC_CONTENTFUL_DELIVERY_TOKEN:', import.meta.env.PUBLIC_CONTENTFUL_DELIVERY_TOKEN);
-console.log('PUBLIC_CONTENTFUL_ACCESS_TOKEN:', import.meta.env.PUBLIC_CONTENTFUL_ACCESS_TOKEN);
-
 // Create the contentful client
-let contentfulClient;
-
-// Set up with explicit error handling
-try {
-  contentfulClient = contentful.createClient({
-    space: import.meta.env.PUBLIC_CONTENTFUL_SPACE_ID,
-    accessToken: import.meta.env.PUBLIC_CONTENTFUL_DELIVERY_TOKEN || import.meta.env.PUBLIC_CONTENTFUL_ACCESS_TOKEN
-  });
-  console.log('Contentful client created successfully');
-} catch (error) {
-  console.error('Error creating Contentful client:', error.message);
-  throw error;
-}
+const contentfulClient = contentful.createClient({
+  space: import.meta.env.CONTENTFUL_SPACE_ID,
+  accessToken: import.meta.env.CONTENTFUL_ACCESS_KEY,
+});
 
 // Export the client
 export { contentfulClient };
