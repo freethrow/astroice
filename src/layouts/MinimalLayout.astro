@@ -1,12 +1,42 @@
 ---
-const { title = 'Design Day 2026' } = Astro.props;
+const {
+  title = 'Design Day 2026',
+  description = '',
+  ogTitle = '',
+  ogDescription = '',
+  ogImage = '',
+  canonical = '',
+} = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="sr-Latn">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="index, follow" />
+
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={ogTitle || title} />
+    {(ogDescription || description) && (
+      <meta property="og:description" content={ogDescription || description} />
+    )}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={ogTitle || title} />
+    {(ogDescription || description) && (
+      <meta name="twitter:description" content={ogDescription || description} />
+    )}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -6,9 +6,47 @@ import { Image } from "astro:assets";
 import posterImage from "../assets/designday2026.jpg";
 
 const locations = [...mockLocations].sort((a, b) => a.order - b.order);
+
+const seo = {
+  title: "Italian Design Day 2026 – Beograd | RE-DESIGN",
+  description:
+    "Italijanski dan dizajna 2026. u Beogradu – RE-DESIGN: regenerisati prostore, predmete, ideje, odnose. Centralni događaj 4. maja 2026, Rezidencija ambasadora Italije, Birčaninova 9a.",
+  ogTitle: "Italian Design Day 2026 – Beograd",
+  ogDescription:
+    "RE-DESIGN: regenerisati prostore, predmete, ideje, odnose. 4. maj 2026, Rezidencija ambasadora Italije, Beograd.",
+  canonical: "https://itabeograd.rs/designday2026",
+  ogImage: "https://itabeograd.rs/og/designday2026.jpg",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: "Italian Design Day 2026 – Beograd",
+  description: seo.description,
+  startDate: "2026-05-04T17:30:00+02:00",
+  endDate: "2026-05-04T21:00:00+02:00",
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  location: {
+    "@type": "Place",
+    name: "Rezidencija ambasadora Italije",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Birčaninova 9a",
+      addressLocality: "Beograd",
+      addressCountry: "RS",
+    },
+  },
+  organizer: {
+    "@type": "Organization",
+    name: "Ambasada Italije u Beogradu",
+  },
+  inLanguage: "sr",
+};
 ---
 
-<MinimalLayout title="Italian Design Day 2026 – Beograd">
+<MinimalLayout {...seo}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   <!-- Hero -->
   <section style="background-color: #F5F0EB;" class="pt-10">
     <div
