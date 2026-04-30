@@ -7,6 +7,7 @@ import { contentfulClient, optimizeImage } from '../lib/contentful';
 let events = [];
 let articles = [];
 let gallery = null;
+let customPages = [];
 
 try {
   console.log('Fetching events...');
@@ -34,6 +35,12 @@ try {
     order: 'sys.createdAt'
   });
   gallery = galleryRes.items && galleryRes.items.length > 0 ? galleryRes.items[0] : null;
+
+  const customPagesRes = await contentfulClient.getEntries({
+    content_type: 'customPage',
+    'fields.active': true,
+  });
+  customPages = customPagesRes.items || [];
 } catch (error) {
   console.error('Error fetching content:', error);
 }
@@ -86,6 +93,31 @@ const randomVideo = getRandomVideo();
       >
       </video>
     </div>
+
+    <!-- Custom Pages Banner -->
+    {customPages.length > 0 && customPages.map((page: any) => (
+      <a
+        href={`/${page.fields.url}`}
+        class="group flex items-center justify-between gap-6 bg-white border border-itaGreen rounded-lg px-6 py-5 mb-8 hover:opacity-80 transition-opacity"
+      >
+        <div class="flex flex-col gap-1">
+          <span class="font-archivo text-xs uppercase tracking-widest font-semibold text-itaGreen">
+            Posebna stranica
+          </span>
+          <span class="font-archivo font-bold text-xl text-itaGreen">
+            {page.fields.title}
+          </span>
+          {page.fields.subtitle && (
+            <span class="font-roboto font-light text-sm text-itaGreen opacity-80">
+              {page.fields.subtitle}
+            </span>
+          )}
+        </div>
+        <span class="font-archivo font-bold text-xs uppercase tracking-widest whitespace-nowrap px-5 py-3 rounded bg-itaGreen text-white flex-shrink-0">
+          Pogledaj →
+        </span>
+      </a>
+    ))}
 
     <!-- Main Grid Section -->
     <div class="grid md:grid-cols-3 gap-6 mb-12">
